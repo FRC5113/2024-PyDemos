@@ -9,6 +9,7 @@ import wpilib
 from wpilib.drive import DifferentialDrive
 from ctre import WPI_TalonFX
 from rev import CANSparkMax
+from rev import CANSparkMaxLowLevel
 
 # CAN ids of three of our robots
 pancake_ids = {
@@ -46,16 +47,16 @@ class MyRobot(wpilib.TimedRobot):
         """Robot initialization function"""
 
         # object that handles basic drive operations
-        if current_ids["controller_type"] = "talon":
+        if current_ids["controller_type"] == "talon":
             self.frontLeftMotor = WPI_TalonFX(current_ids["front_left"])
             self.rearLeftMotor = WPI_TalonFX(current_ids["back_left"])
             self.frontRightMotor = WPI_TalonFX(current_ids["front_right"])
             self.rearRightMotor = WPI_TalonFX(current_ids["back_right"])
-        else if current_ids["controller_type"] = "spark_max":
-            self.frontLeftMotor = CANSparkMax(current_ids["front_left"])
-            self.rearLeftMotor = CANSparkMax(current_ids["back_left"])
-            self.frontRightMotor = CANSparkMax(current_ids["front_right"])
-            self.rearRightMotor = CANSparkMax(current_ids["back_right"])
+        elif current_ids["controller_type"] == "spark_max":
+            self.frontLeftMotor = CANSparkMax(current_ids["front_left"],CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.rearLeftMotor = CANSparkMax(current_ids["back_left"],CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.frontRightMotor = CANSparkMax(current_ids["front_right"],CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.rearRightMotor = CANSparkMax(current_ids["back_right"],CANSparkMaxLowLevel.MotorType.kBrushless)
 
         self.left = wpilib.MotorControllerGroup(self.frontLeftMotor, self.rearLeftMotor)
         self.right = wpilib.MotorControllerGroup(
