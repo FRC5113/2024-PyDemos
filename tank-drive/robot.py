@@ -39,7 +39,7 @@ current_ids = pandemonium_ids
 
 def curve(raw):
     # amount input is scaled by (keep at 0.5 to be safe)
-    return 0.5*raw
+    return 0.3*raw
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -81,7 +81,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self):
         """Runs the motors with arcade steering"""
-        self.myRobot.arcadeDrive(-curve(self.xbox.getLeftY()), -curve(self.xbox.getLeftX()))
+        self.myRobot.tankDrive(-curve(self.xbox.getLeftY()), -curve(self.xbox.getRightY()))
 
 
 if __name__ == "__main__":
