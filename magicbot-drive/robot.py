@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import wpilib
+from rev import CANSparkMax, CANSparkMaxLowLevel
 from magicbot import MagicRobot
 
-from components.component1 import Component1
-from components.component2 import Component2
+from components.drivetrain import Drivetrain
 
 
 class MyRobot(MagicRobot):
@@ -12,34 +12,28 @@ class MyRobot(MagicRobot):
     # Define components here
     #
 
-    component1: Component1
-    component2: Component2
-
-    # You can even pass constants to components
-    SOME_CONSTANT = 1
+    drivetrain: Drivetrain
 
     def createObjects(self):
         """Initialize all wpilib motors & sensors"""
 
-        # TODO: create button example here
-
-        self.component1_motor = wpilib.Talon(1)
-        self.some_motor = wpilib.Talon(2)
+        self.front_left_drive_motor = CANSparkMax(11,CANSparkMaxLowLevel.MotorType.kBrushless)
+        self.front_right_drive_motor = CANSparkMax(12,CANSparkMaxLowLevel.MotorType.kBrushless)
+        self.back_left_drive_motor = CANSparkMax(21,CANSparkMaxLowLevel.MotorType.kBrushless)
+        self.back_right_drive_motor = CANSparkMax(22,CANSparkMaxLowLevel.MotorType.kBrushless)
 
         self.joystick = wpilib.Joystick(0)
 
-    #
-    # No autonomous routine boilerplate required here, anything in the
-    # autonomous folder will automatically get added to a list
-    #
+    def teleopInit(self):
+        """Called right before teleop control loop starts"""
+        self.drivetrain.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
         """Place code here that does things as a result of operator
         actions"""
 
         try:
-            if self.joystick.getTrigger():
-                self.component2.do_something()
+            self.drivetrain.arcade_drive(-curve(self.joystick.getY()), -curve(self.joystick.getX()))
         except:
             self.onException()
 

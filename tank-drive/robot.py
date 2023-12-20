@@ -80,7 +80,7 @@ class MyRobot(wpilib.TimedRobot):
         self.myRobot.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
-        """Runs the motors with arcade steering"""
+        """Runs the motors with tank steering"""
         self.myRobot.tankDrive(-curve(self.xbox.getLeftY()), -curve(self.xbox.getRightY()))
 
 
