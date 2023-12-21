@@ -6,6 +6,8 @@ from magicbot import MagicRobot
 
 from components.drivetrain import Drivetrain
 
+def curve(a):
+    return a
 
 class MyRobot(MagicRobot):
     #
@@ -26,14 +28,14 @@ class MyRobot(MagicRobot):
 
     def teleopInit(self):
         """Called right before teleop control loop starts"""
-        self.drivetrain.setSafetyEnabled(True)
+        self.drivetrain.drive.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
         """Place code here that does things as a result of operator
         actions"""
 
         try:
-            self.drivetrain.arcade_drive(-curve(self.joystick.getY()), -curve(self.joystick.getX()))
+            self.drivetrain.arcade_drive(curve(self.joystick.getY()), -curve(self.joystick.getX()))
         except:
             self.onException()
 
