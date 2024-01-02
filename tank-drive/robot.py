@@ -13,25 +13,25 @@ from rev import CANSparkMaxLowLevel
 
 # CAN ids of three of our robots
 pancake_ids = {
-    "front_left" : 8,
-    "back_left" : 7,
-    "front_right" : 9,
-    "back_right" : 11,
-    "controller_type" : "talon"
+    "front_left": 8,
+    "back_left": 7,
+    "front_right": 9,
+    "back_right": 11,
+    "controller_type": "talon",
 }
 perry_ids = {
-    "front_left" : 41,
-    "back_left" : 42,
-    "front_right" : 44,
-    "back_right" : 43,
-    "controller_type" : "talon"
+    "front_left": 41,
+    "back_left": 42,
+    "front_right": 44,
+    "back_right": 43,
+    "controller_type": "talon",
 }
 pandemonium_ids = {
-    "front_left" : 11,
-    "back_left" : 21,
-    "front_right" : 12,
-    "back_right" : 22,
-    "controller_type" : "spark_max"
+    "front_left": 11,
+    "back_left": 21,
+    "front_right": 12,
+    "back_right": 22,
+    "controller_type": "spark_max",
 }
 # set this to change current robot
 current_ids = pandemonium_ids
@@ -39,7 +39,7 @@ current_ids = pandemonium_ids
 
 def curve(raw):
     # amount input is scaled by (keep at 0.5 to be safe)
-    return 0.3*raw
+    return 0.3 * raw
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -53,10 +53,18 @@ class MyRobot(wpilib.TimedRobot):
             self.frontRightMotor = WPI_TalonFX(current_ids["front_right"])
             self.rearRightMotor = WPI_TalonFX(current_ids["back_right"])
         elif current_ids["controller_type"] == "spark_max":
-            self.frontLeftMotor = CANSparkMax(current_ids["front_left"],CANSparkMaxLowLevel.MotorType.kBrushless)
-            self.rearLeftMotor = CANSparkMax(current_ids["back_left"],CANSparkMaxLowLevel.MotorType.kBrushless)
-            self.frontRightMotor = CANSparkMax(current_ids["front_right"],CANSparkMaxLowLevel.MotorType.kBrushless)
-            self.rearRightMotor = CANSparkMax(current_ids["back_right"],CANSparkMaxLowLevel.MotorType.kBrushless)
+            self.frontLeftMotor = CANSparkMax(
+                current_ids["front_left"], CANSparkMaxLowLevel.MotorType.kBrushless
+            )
+            self.rearLeftMotor = CANSparkMax(
+                current_ids["back_left"], CANSparkMaxLowLevel.MotorType.kBrushless
+            )
+            self.frontRightMotor = CANSparkMax(
+                current_ids["front_right"], CANSparkMaxLowLevel.MotorType.kBrushless
+            )
+            self.rearRightMotor = CANSparkMax(
+                current_ids["back_right"], CANSparkMaxLowLevel.MotorType.kBrushless
+            )
 
         self.left = wpilib.MotorControllerGroup(self.frontLeftMotor, self.rearLeftMotor)
         self.right = wpilib.MotorControllerGroup(
@@ -74,14 +82,15 @@ class MyRobot(wpilib.TimedRobot):
         # xbox controller
         self.xbox = wpilib.XboxController(0)
 
-
     def teleopInit(self):
         """Executed at the start of teleop mode"""
         self.myRobot.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
         """Runs the motors with tank steering"""
-        self.myRobot.tankDrive(-curve(self.xbox.getLeftY()), -curve(self.xbox.getRightY()))
+        self.myRobot.tankDrive(
+            -curve(self.xbox.getLeftY()), -curve(self.xbox.getRightY())
+        )
 
 
 if __name__ == "__main__":

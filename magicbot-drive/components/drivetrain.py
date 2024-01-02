@@ -3,17 +3,19 @@ from wpilib.drive import DifferentialDrive
 from rev import CANSparkMax, CANSparkMaxLowLevel
 from magicbot import will_reset_to
 
+from config import DrivetrainConfig
+
 
 class Drivetrain:
     # annotate motor and configuration instances
-    cfg: DrivetrainConfig  # fix pls
+    cfg: DrivetrainConfig
 
     # values will reset to 0 after every time control loop runs
     forward = will_reset_to(0)
     turn = will_reset_to(0)
 
     def setup(self):
-        if self.cfg.controller_type == "SPARKMAX":
+        if self.cfg.controller_type == "SPARK_MAX":
             self.front_left_drive_motor = CANSparkMax(
                 self.cfg.front_left_id, CANSparkMaxLowLevel.MotorType.kBrushless
             )

@@ -1,25 +1,10 @@
 #!/usr/bin/env python3
-
-from collections import namedtuple
-
 import wpilib
 from rev import CANSparkMax, CANSparkMaxLowLevel
 from magicbot import MagicRobot
 
 from components.drivetrain import Drivetrain
-
-# Configuration objects will be injected into component classes
-DrivetrainConfig = namedtuple(
-    "DrivetrainConfig",
-    "front_left_id front_right_id back_left_id back_right_id controller_type",
-)
-pandemonium_cfg = DrivetrainConfig(
-    front_left_id=11,
-    front_right_id=12,
-    back_left_id=21,
-    back_right_id=22,
-    controller_type="SPARKMAX",
-)
+from config import pandemonium_cfg
 
 
 def curve(a):
