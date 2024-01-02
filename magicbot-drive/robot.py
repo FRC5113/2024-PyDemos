@@ -1,13 +1,31 @@
 #!/usr/bin/env python3
 
+from collections import namedtuple
+
 import wpilib
 from rev import CANSparkMax, CANSparkMaxLowLevel
 from magicbot import MagicRobot
 
 from components.drivetrain import Drivetrain
 
+# Configuration objects will be injected into component classes
+DrivetrainConfig = namedtuple(
+    "DrivetrainConfig",
+    "front_left_id front_right_id back_left_id back_right_id controller_type",
+)
+pandemonium_cfg = DrivetrainConfig(
+    front_left_id=11,
+    front_right_id=12,
+    back_left_id=21,
+    back_right_id=22,
+    controller_type="SPARKMAX",
+)
+
+
 def curve(a):
+    """Adjust raw input value for better control of drivetrain"""
     return a
+
 
 class MyRobot(MagicRobot):
     #
@@ -15,15 +33,10 @@ class MyRobot(MagicRobot):
     #
 
     drivetrain: Drivetrain
+    drivetrain_cfg = pandemonium_cfg
 
     def createObjects(self):
         """Initialize all wpilib motors & sensors"""
-
-        self.front_left_drive_motor = CANSparkMax(11,CANSparkMaxLowLevel.MotorType.kBrushless)
-        self.front_right_drive_motor = CANSparkMax(12,CANSparkMaxLowLevel.MotorType.kBrushless)
-        self.back_left_drive_motor = CANSparkMax(21,CANSparkMaxLowLevel.MotorType.kBrushless)
-        self.back_right_drive_motor = CANSparkMax(22,CANSparkMaxLowLevel.MotorType.kBrushless)
-
         self.joystick = wpilib.Joystick(0)
 
     def teleopInit(self):
@@ -35,7 +48,9 @@ class MyRobot(MagicRobot):
         actions"""
 
         try:
-            self.drivetrain.arcade_drive(curve(self.joystick.getY()), -curve(self.joystick.getX()))
+            self.drivetrain.arcade_drive(
+                curve(self.joystick.getY()), -curve(self.joystick.getX())
+            )
         except:
             self.onException()
 
