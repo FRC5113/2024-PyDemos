@@ -22,11 +22,10 @@ Some notes:
 * Directories containing demo programs should be titled in all lowercase with words separated by hyphens (eg. "tank-drive")
 
 ## Magicbot Recommendations
-* Use variable injection when possible
-* If a component requires a lot of configuration, consider injecting a `namedtuple` (configuration object should be named `cfg`). This should be done in a separated config.py file.
+* Initialize all wpilib objects in `createObject()` and not in components. Consider using variable injection to make this easier.
 * Be sure to account for any exceptions that could result from operator input
-* Never interact with operator input or networktables in components themselves: this code should only be contained within `teleopPeriodic`
-* Only interact with hardware in the `execute` method of components
+* Never interact with operator input or networktables in components themselves: this code should only be contained within `teleopPeriodic()`
+* Only interact with hardware in the `execute()` method of components
 
 ## Github Stylistic Conventions
 * Commit messages should be written in the imperative mood, like a command (eg. "add Philosophy.md" rather than "added Philosophy.md" or "Philosophy.md is added")
