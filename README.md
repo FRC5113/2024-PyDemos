@@ -7,5 +7,8 @@ General Magicbot template (not for use as actual program)
 ### magicbot-drive
 Basic Magicbot drivetrain
 
+### magicbot-drivepid
+Using PID controllers on the drivetrain
+
 ### tank-drive
 Basic drivetrain
