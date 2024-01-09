@@ -12,7 +12,3 @@ pandemonium_cfg = DrivetrainConfig(
     back_right_id=22,
     controller_type="SPARK_MAX",
 )
-
-PIDConfig = namedtuple("PIDConfig", "kP kI kD")
-# not yet tuned, values should realistically be tunables
-TurnToAngle_cfg = PIDConfig(kP=0, kI=0, kD=0)

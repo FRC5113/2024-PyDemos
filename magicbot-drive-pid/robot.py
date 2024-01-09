@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import wpilib
 from rev import CANSparkMax, CANSparkMaxLowLevel
-from magicbot import MagicRobot
+from magicbot import MagicRobot, feedback
 import navx
 
 from components.drive_control import DriveControl
@@ -14,7 +14,7 @@ drivetrain_cfg = pandemonium_cfg
 
 def curve(a):
     """Adjust raw input value for better control of drivetrain"""
-    return a
+    return 0.3 * a
 
 
 class MyRobot(MagicRobot):
@@ -65,6 +65,10 @@ class MyRobot(MagicRobot):
                 self.drivetrain.arcade_drive(
                     curve(self.joystick.getY()), -curve(self.joystick.getX())
                 )
+
+    @feedback
+    def get_angle(self):
+        return self.navx.getAngle()
 
 
 if __name__ == "__main__":

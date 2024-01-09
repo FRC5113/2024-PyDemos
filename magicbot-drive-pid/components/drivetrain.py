@@ -1,7 +1,7 @@
 import wpilib
 from wpilib.interfaces import MotorController
 from wpilib.drive import DifferentialDrive
-from magicbot import will_reset_to
+from magicbot import will_reset_to, tunable
 
 
 class Drivetrain:
