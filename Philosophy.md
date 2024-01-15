@@ -1,5 +1,5 @@
 # Philosophy of the 5113's Robot Code
-> Authors: Vlad Bondar, Ben DeBear
+> Authors: Kevin Hwang, Vlad Bondar, Ben DeBear
 ## Simply
 1. **It Works**
 2. It's Clean
