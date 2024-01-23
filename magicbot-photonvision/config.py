@@ -12,3 +12,10 @@ pandemonium_cfg = DrivetrainConfig(
     back_right_id=22,
     controller_type="SPARK_MAX",
 )
+pancake_cfg = DrivetrainConfig(
+    front_left_id=8,
+    front_right_id=7,
+    back_left_id=9,
+    back_right_id=11,
+    controller_type="TALON",
+)

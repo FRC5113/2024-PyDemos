@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import wpilib
 from rev import CANSparkMax, CANSparkMaxLowLevel
+from ctre import WPI_TalonFX
 from magicbot import MagicRobot, feedback
 import navx
 from photonvision import PhotonCamera
@@ -8,7 +9,7 @@ from photonvision import PhotonCamera
 from components.drive_control import DriveControl
 from components.drivetrain import Drivetrain
 from components.vision import Vision
-from config import pandemonium_cfg
+from config import *
 
 
 drivetrain_cfg = pandemonium_cfg
@@ -44,13 +45,17 @@ class MyRobot(MagicRobot):
             self.drivetrain_back_right_motor = CANSparkMax(
                 drivetrain_cfg.back_right_id, CANSparkMaxLowLevel.MotorType.kBrushless
             )
+        elif drivetrain_cfg.controller_type == "TALON":
+            self.drivetrain_front_left_motor = WPI_TalonFX(drivetrain_cfg.front_left_id)
+            self.drivetrain_front_right_motor = WPI_TalonFX(drivetrain_cfg.front_right_id)
+            self.drivetrain_back_left_motor = WPI_TalonFX(drivetrain_cfg.back_left_id)
+            self.drivetrain_back_right_motor = WPI_TalonFX(drivetrain_cfg.back_right_id)
         else:
             raise Exception(
                 f"Improper controller type in drivetrain_cfg: {drivetrain_cfg.controller_type}"
             )
 
-        # update with actual camera name
-        self.camera = PhotonCamera("")
+        self.camera = PhotonCamera("Global_Shutter_Camera")
         self.vision_filter_window = 10
 
         self.navx = navx.AHRS.create_spi()

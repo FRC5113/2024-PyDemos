@@ -7,9 +7,9 @@
 
 import wpilib
 from wpilib.drive import DifferentialDrive
-from ctre import WPI_TalonFX
+from phoenix5 import WPI_TalonFX
 from rev import CANSparkMax
-from rev import CANSparkMaxLowLevel
+from rev import CANSparkLowLevel
 
 # CAN ids of three of our robots
 pancake_ids = {
@@ -34,12 +34,12 @@ pandemonium_ids = {
     "controller_type": "spark_max",
 }
 # set this to change current robot
-current_ids = pandemonium_ids
+current_ids = pancake_ids
 
 
 def curve(raw):
     # amount input is scaled by (keep at 0.5 to be safe)
-    return 0.3 * raw
+    return 0.5 * raw
 
 
 class MyRobot(wpilib.TimedRobot):
