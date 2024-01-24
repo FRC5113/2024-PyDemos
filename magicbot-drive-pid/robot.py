@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import wpilib
-from rev import CANSparkMax, CANSparkMaxLowLevel
+from rev import CANSparkMax, CANSparkLowLevel
 from magicbot import MagicRobot, feedback
 import navx
 
@@ -30,16 +30,16 @@ class MyRobot(MagicRobot):
         """Initialize all wpilib motors & sensors"""
         if drivetrain_cfg.controller_type == "SPARK_MAX":
             self.drivetrain_front_left_motor = CANSparkMax(
-                drivetrain_cfg.front_left_id, CANSparkMaxLowLevel.MotorType.kBrushless
+                drivetrain_cfg.front_left_id, CANSparkLowLevel.MotorType.kBrushless
             )
             self.drivetrain_front_right_motor = CANSparkMax(
-                drivetrain_cfg.front_right_id, CANSparkMaxLowLevel.MotorType.kBrushless
+                drivetrain_cfg.front_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
             self.drivetrain_back_left_motor = CANSparkMax(
-                drivetrain_cfg.back_left_id, CANSparkMaxLowLevel.MotorType.kBrushless
+                drivetrain_cfg.back_left_id, CANSparkLowLevel.MotorType.kBrushless
             )
             self.drivetrain_back_right_motor = CANSparkMax(
-                drivetrain_cfg.back_right_id, CANSparkMaxLowLevel.MotorType.kBrushless
+                drivetrain_cfg.back_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
         else:
             raise Exception(

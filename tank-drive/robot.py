@@ -54,16 +54,16 @@ class MyRobot(wpilib.TimedRobot):
             self.rearRightMotor = WPI_TalonFX(current_ids["back_right"])
         elif current_ids["controller_type"] == "spark_max":
             self.frontLeftMotor = CANSparkMax(
-                current_ids["front_left"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["front_left"], CANSparkLowLevel.MotorType.kBrushless
             )
             self.rearLeftMotor = CANSparkMax(
-                current_ids["back_left"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["back_left"], CANSparkLowLevel.MotorType.kBrushless
             )
             self.frontRightMotor = CANSparkMax(
-                current_ids["front_right"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["front_right"], CANSparkLowLevel.MotorType.kBrushless
             )
             self.rearRightMotor = CANSparkMax(
-                current_ids["back_right"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["back_right"], CANSparkLowLevel.MotorType.kBrushless
             )
 
         self.left = wpilib.MotorControllerGroup(self.frontLeftMotor, self.rearLeftMotor)
