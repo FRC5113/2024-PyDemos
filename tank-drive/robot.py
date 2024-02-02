@@ -7,7 +7,11 @@
 
 import wpilib
 from wpilib.drive import DifferentialDrive
-from phoenix5 import WPI_TalonFX
+from phoenix6.hardware.talon_fx import TalonFX
+from phoenix6.configs.talon_fx_configs import TalonFXConfiguration
+from phoenix6.controls.duty_cycle_out import DutyCycleOut
+from phoenix6.controls.follower import Follower
+from phoenix6.signals import InvertedValue
 from rev import CANSparkMax
 from rev import CANSparkLowLevel
 
@@ -47,33 +51,46 @@ class MyRobot(wpilib.TimedRobot):
         """Robot initialization function"""
 
         # object that handles basic drive operations
-        if current_ids["controller_type"] == "talon":
-            self.frontLeftMotor = WPI_TalonFX(current_ids["front_left"])
-            self.rearLeftMotor = WPI_TalonFX(current_ids["back_left"])
-            self.frontRightMotor = WPI_TalonFX(current_ids["front_right"])
-            self.rearRightMotor = WPI_TalonFX(current_ids["back_right"])
-        elif current_ids["controller_type"] == "spark_max":
+        if current_ids["controller_type"] == "spark_max":
             self.frontLeftMotor = CANSparkMax(
-                current_ids["front_left"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["front_left"], CANSparkLowLevel.MotorType.kBrushless
             )
             self.rearLeftMotor = CANSparkMax(
-                current_ids["back_left"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["back_left"], CANSparkLowLevel.MotorType.kBrushless
             )
             self.frontRightMotor = CANSparkMax(
-                current_ids["front_right"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["front_right"], CANSparkLowLevel.MotorType.kBrushless
             )
             self.rearRightMotor = CANSparkMax(
-                current_ids["back_right"], CANSparkMaxLowLevel.MotorType.kBrushless
+                current_ids["back_right"], CANSparkLowLevel.MotorType.kBrushless
             )
 
-        self.left = wpilib.MotorControllerGroup(self.frontLeftMotor, self.rearLeftMotor)
-        self.right = wpilib.MotorControllerGroup(
-            self.frontRightMotor, self.rearRightMotor
-        )
-        self.right.setInverted(True)
+            self.left = wpilib.MotorControllerGroup(
+                self.frontLeftMotor, self.rearLeftMotor
+            )
+            self.right = wpilib.MotorControllerGroup(
+                self.frontRightMotor, self.rearRightMotor
+            )
+            self.right.setInverted(True)
+            self.myRobot = DifferentialDrive(self.left, self.right)
+            self.myRobot.setExpiration(0.1)
 
-        self.myRobot = DifferentialDrive(self.left, self.right)
-        self.myRobot.setExpiration(0.1)
+        elif current_ids["controller_type"] == "talon":
+            self.frontLeftMotor = TalonFX(current_ids["front_left"])
+            self.rearLeftMotor = TalonFX(current_ids["back_left"])
+            self.frontRightMotor = TalonFX(current_ids["front_right"])
+            self.rearRightMotor = TalonFX(current_ids["back_right"])
+
+            self.leftOut = DutyCycleOut(0, enable_foc=False)
+            self.rightOut = DutyCycleOut(0, enable_foc=False)
+
+            rightConfig = TalonFXConfiguration()
+            rightConfig.motor_output.inverted = InvertedValue.CLOCKWISE_POSITIVE
+            self.frontRightMotor.configurator.apply(rightConfig)
+            self.rearRightMotor.configurator.apply(rightConfig)
+
+            self.frontLeftMotor.set_control(Follower(current_ids["back_left"], False))
+            self.frontRightMotor.set_control(Follower(current_ids["back_right"], False))
 
         # joysticks
         # self.leftStick = wpilib.Joystick(0)
@@ -84,13 +101,24 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopInit(self):
         """Executed at the start of teleop mode"""
-        self.myRobot.setSafetyEnabled(True)
+        if current_ids["controller_type"] == "spark_max":
+            self.myRobot.setSafetyEnabled(True)
+        # elif current_ids["controller_type"] == "talon":
+        #     self.frontLeftMotor.setSafetyEnabled(True)
+        #     self.frontRightMotor.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
         """Runs the motors with tank steering"""
-        self.myRobot.tankDrive(
-            -curve(self.xbox.getLeftY()), -curve(self.xbox.getRightY())
-        )
+        forward = curve(self.xbox.getLeftY())
+        turn = -curve(self.xbox.getLeftX())
+        if current_ids["controller_type"] == "spark_max":
+            self.myRobot.arcadeDrive(forward, turn)
+        elif current_ids["controller_type"] == "talon":
+            speeds = DifferentialDrive.arcadeDriveIK(forward, turn)
+            self.leftOut.output = speeds.left
+            self.rightOut.output = speeds.right
+            self.frontLeftMotor.set_control(self.leftOut)
+            self.frontRightMotor.set_control(self.rightOut)
 
 
 if __name__ == "__main__":
