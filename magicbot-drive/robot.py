@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
+from phoenix6.hardware.talon_fx import TalonFX
 from magicbot import MagicRobot
 
-from components.drivetrain import Drivetrain
-from config import pandemonium_cfg
+from components.drivetrain import SparkMaxDrivetrain, TalonFXDrivetrain
+import config
 
 
-drivetrain_cfg = pandemonium_cfg
+drivetrain_cfg = config.pancake_cfg
 
 
 def curve(a):
@@ -20,11 +21,11 @@ class MyRobot(MagicRobot):
     # Define components here
     #
 
-    drivetrain: Drivetrain
+    drivetrain: TalonFXDrivetrain
 
     def createObjects(self):
         """Initialize all wpilib motors & sensors"""
-        if drivetrain_cfg.controller_type == "SPARK_MAX":
+        if drivetrain_cfg.controller_type == config.ControllerType.SPARK_MAX:
             self.drivetrain_front_left_motor = CANSparkMax(
                 drivetrain_cfg.front_left_id, CANSparkLowLevel.MotorType.kBrushless
             )
@@ -37,16 +38,17 @@ class MyRobot(MagicRobot):
             self.drivetrain_back_right_motor = CANSparkMax(
                 drivetrain_cfg.back_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
+        elif drivetrain_cfg.controller_type == config.ControllerType.TALON_FX:
+            self.drivetrain_front_left_motor = TalonFX(drivetrain_cfg.front_left_id)
+            self.drivetrain_front_right_motor = TalonFX(drivetrain_cfg.front_right_id)
+            self.drivetrain_back_left_motor = TalonFX(drivetrain_cfg.back_left_id)
+            self.drivetrain_back_right_motor = TalonFX(drivetrain_cfg.back_right_id)
         else:
             raise Exception(
                 f"Improper controller type in drivetrain_cfg: {drivetrain_cfg.controller_type}"
             )
 
         self.joystick = wpilib.Joystick(0)
-
-    def teleopInit(self):
-        """Called right before teleop control loop starts"""
-        self.drivetrain.drive.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
         """Place code here that does things as a result of operator

@@ -89,8 +89,8 @@ class MyRobot(wpilib.TimedRobot):
             self.frontRightMotor.configurator.apply(rightConfig)
             self.rearRightMotor.configurator.apply(rightConfig)
 
-            self.frontLeftMotor.set_control(Follower(current_ids["back_left"], False))
-            self.frontRightMotor.set_control(Follower(current_ids["back_right"], False))
+            self.rearLeftMotor.set_control(Follower(current_ids["front_left"], False))
+            self.rearRightMotor.set_control(Follower(current_ids["front_right"], False))
 
         # joysticks
         # self.leftStick = wpilib.Joystick(0)
