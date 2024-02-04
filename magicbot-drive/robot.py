@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
-from phoenix6.hardware.talon_fx import TalonFX
+from util import WPI_TalonFX
 from magicbot import MagicRobot
 
-from components.drivetrain import SparkMaxDrivetrain, TalonFXDrivetrain
+from components.drivetrain import Drivetrain
 import config
 
 
@@ -21,10 +21,11 @@ class MyRobot(MagicRobot):
     # Define components here
     #
 
-    drivetrain: TalonFXDrivetrain
+    drivetrain: Drivetrain
 
     def createObjects(self):
         """Initialize all wpilib motors & sensors"""
+        self.drivetrain_controller_type = drivetrain_cfg.controller_type
         if drivetrain_cfg.controller_type == config.ControllerType.SPARK_MAX:
             self.drivetrain_front_left_motor = CANSparkMax(
                 drivetrain_cfg.front_left_id, CANSparkLowLevel.MotorType.kBrushless
@@ -39,10 +40,10 @@ class MyRobot(MagicRobot):
                 drivetrain_cfg.back_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
         elif drivetrain_cfg.controller_type == config.ControllerType.TALON_FX:
-            self.drivetrain_front_left_motor = TalonFX(drivetrain_cfg.front_left_id)
-            self.drivetrain_front_right_motor = TalonFX(drivetrain_cfg.front_right_id)
-            self.drivetrain_back_left_motor = TalonFX(drivetrain_cfg.back_left_id)
-            self.drivetrain_back_right_motor = TalonFX(drivetrain_cfg.back_right_id)
+            self.drivetrain_front_left_motor = WPI_TalonFX(drivetrain_cfg.front_left_id)
+            self.drivetrain_front_right_motor = WPI_TalonFX(drivetrain_cfg.front_right_id)
+            self.drivetrain_back_left_motor = WPI_TalonFX(drivetrain_cfg.back_left_id)
+            self.drivetrain_back_right_motor = WPI_TalonFX(drivetrain_cfg.back_right_id)
         else:
             raise Exception(
                 f"Improper controller type in drivetrain_cfg: {drivetrain_cfg.controller_type}"

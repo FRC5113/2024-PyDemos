@@ -1,6 +1,6 @@
 import math
 
-from photonvision import PhotonCamera
+from photonlibpy import PhotonCamera
 from wpimath.filter import MedianFilter
 
 

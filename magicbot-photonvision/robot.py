@@ -4,7 +4,7 @@ from rev import CANSparkMax, CANSparkLowLevel
 from phoenix5 import WPI_TalonFX
 from magicbot import MagicRobot, feedback
 import navx
-from photonvision import PhotonCamera
+from photonlibpy import PhotonCamera
 
 from components.drive_control import DriveControl
 from components.drivetrain import Drivetrain
