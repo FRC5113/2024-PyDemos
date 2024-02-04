@@ -1,9 +1,11 @@
 from collections import namedtuple
 from enum import Enum
 
+
 class ControllerType(Enum):
     SPARK_MAX = 0
     TALON_FX = 1
+
 
 # Configuration objects will be injected into component classes
 DrivetrainConfig = namedtuple(

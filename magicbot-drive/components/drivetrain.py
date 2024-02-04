@@ -43,7 +43,6 @@ class Drivetrain:
         self.back_left_motor.setIdleMode(idle_mode)
         self.back_right_motor.setIdleMode(idle_mode)
 
-
     def arcade_drive(self, forward: float, turn: float):
         assert -1.0 < forward < 1.0, f"Improper forward: {forward}"
         assert -1.0 < turn < 1.0, f"Improper turn: {turn}"
