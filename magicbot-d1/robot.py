@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""This is a demo program showing the basic structure of a magicbot project.
+It is not meant to be functional.
+"""
 
 import wpilib
 from magicbot import MagicRobot

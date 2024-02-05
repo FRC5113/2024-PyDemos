@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    This is a demo program showing the use of the RobotDrive class,
+    This is a demo program showing the use of the TimedRobot class,
     specifically it contains the code necessary to operate a robot with
     tank drive.
 """
@@ -14,6 +14,8 @@ from phoenix6.controls.follower import Follower
 from phoenix6.signals import InvertedValue
 from rev import CANSparkMax
 from rev import CANSparkLowLevel
+
+import util
 
 # CAN ids of three of our robots
 pancake_ids = {
@@ -41,16 +43,26 @@ pandemonium_ids = {
 current_ids = pancake_ids
 
 
-def curve(raw):
-    # amount input is scaled by (keep at 0.5 to be safe)
-    return 0.5 * raw
-
-
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
-        """Robot initialization function"""
+        """Robot initialization function
 
-        # object that handles basic drive operations
+        Here, two different ways of achieving differential drive are showcased.
+        In the first (with the Spark Max controller), the motor controllers are
+        combined into two groups and then combined into one DifferentialDrive
+        object. This is the preferred way of doing this, but some motor
+        controllers (such as any TalonFX controller with phoenix6) do not
+        implement the MotorController interface from wpilib and therefore
+        cannot be used in MotorControllerGroup objects. Instead, two motors
+        are configured to follow two others and speeds are set for each of the
+        leader controllers.
+
+        As with most drivetrains, one side is inverted here because the motors
+        on one side are rotated 180 degrees compared to the other, so the
+        definition of "forward" changes based on the side of the robot that
+        the motor is on.
+        """
+
         if current_ids["controller_type"] == "spark_max":
             self.frontLeftMotor = CANSparkMax(
                 current_ids["front_left"], CANSparkLowLevel.MotorType.kBrushless
@@ -74,7 +86,6 @@ class MyRobot(wpilib.TimedRobot):
             self.right.setInverted(True)
             self.myRobot = DifferentialDrive(self.left, self.right)
             self.myRobot.setExpiration(0.1)
-
         elif current_ids["controller_type"] == "talon":
             self.frontLeftMotor = TalonFX(current_ids["front_left"])
             self.rearLeftMotor = TalonFX(current_ids["back_left"])
@@ -85,6 +96,7 @@ class MyRobot(wpilib.TimedRobot):
             self.rightOut = DutyCycleOut(0, enable_foc=False)
 
             rightConfig = TalonFXConfiguration()
+            # default is counter clockwise
             rightConfig.motor_output.inverted = InvertedValue.CLOCKWISE_POSITIVE
             self.frontRightMotor.configurator.apply(rightConfig)
             self.rearRightMotor.configurator.apply(rightConfig)
@@ -92,25 +104,25 @@ class MyRobot(wpilib.TimedRobot):
             self.rearLeftMotor.set_control(Follower(current_ids["front_left"], False))
             self.rearRightMotor.set_control(Follower(current_ids["front_right"], False))
 
-        # joysticks
-        # self.leftStick = wpilib.Joystick(0)
-        # self.rightStick = wpilib.Joystick(1)
-
-        # xbox controller
         self.xbox = wpilib.XboxController(0)
+        self.curve = util.linear_curve(scalar=0.5, deadband=0.1, max_mag=1)
 
     def teleopInit(self):
         """Executed at the start of teleop mode"""
         if current_ids["controller_type"] == "spark_max":
             self.myRobot.setSafetyEnabled(True)
-        # elif current_ids["controller_type"] == "talon":
-        #     self.frontLeftMotor.setSafetyEnabled(True)
-        #     self.frontRightMotor.setSafetyEnabled(True)
 
     def teleopPeriodic(self):
-        """Runs the motors with tank steering"""
-        forward = curve(self.xbox.getLeftY())
-        turn = -curve(self.xbox.getLeftX())
+        """Runs the motors with tank steering
+
+        If a DifferentialDrive object has been created, forward and turn
+        inputs can be supplied into the object and it will handle setting
+        the motor speeds. If not, the speeds must first be calculated by
+        an inverse kinematics function and then manually fed into the
+        leader motors.
+        """
+        forward = self.curve(self.xbox.getLeftY())
+        turn = -self.curve(self.xbox.getLeftX())
         if current_ids["controller_type"] == "spark_max":
             self.myRobot.arcadeDrive(forward, turn)
         elif current_ids["controller_type"] == "talon":

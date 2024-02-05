@@ -8,7 +8,10 @@ General Magicbot template (not for use as actual program)
 Basic Magicbot drivetrain
 
 ### magicbot-drivepid
-Using PID controllers on the drivetrain
+Using PID controllers on a Magicbot drivetrain
+
+### magicbot-photonvision
+Using Apriltags to control a Magicbot drivetrain
 
 ### tank-drive
 Basic drivetrain

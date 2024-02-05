@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
+"""This is a demo program showcasing the use of the photonlibpy library
+to use Apriltags in a magicbot project. In this case, the robot can be made to
+identify, turn to, or follow Apriltags.
+"""
+
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
 from phoenix5 import WPI_TalonFX
 from magicbot import MagicRobot, feedback
 import navx
-from photonlibpy import PhotonCamera
+from photonlibpy.photonCamera import PhotonCamera
 
 from components.drive_control import DriveControl
 from components.drivetrain import Drivetrain
@@ -46,18 +51,12 @@ class MyRobot(MagicRobot):
                 drivetrain_cfg.back_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
         elif drivetrain_cfg.controller_type == "TALON":
-            self.drivetrain_front_left_motor = WPI_TalonFX(
-                drivetrain_cfg.front_left_id
-            )
+            self.drivetrain_front_left_motor = WPI_TalonFX(drivetrain_cfg.front_left_id)
             self.drivetrain_front_right_motor = WPI_TalonFX(
                 drivetrain_cfg.front_right_id
             )
-            self.drivetrain_back_left_motor = WPI_TalonFX(
-                drivetrain_cfg.back_left_id
-            )
-            self.drivetrain_back_right_motor = WPI_TalonFX(
-                drivetrain_cfg.back_right_id
-            )
+            self.drivetrain_back_left_motor = WPI_TalonFX(drivetrain_cfg.back_left_id)
+            self.drivetrain_back_right_motor = WPI_TalonFX(drivetrain_cfg.back_right_id)
         else:
             raise Exception(
                 f"Improper controller type in drivetrain_cfg: {drivetrain_cfg.controller_type}"

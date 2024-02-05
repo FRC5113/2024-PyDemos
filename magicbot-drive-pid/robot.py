@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""This is a demo program showcasing the use of PID control in a
+magicbot state machine. Specifically, this program contains a PID controller
+that allows the robot to turn to a certain angle.
+"""
+
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
 from magicbot import MagicRobot, feedback

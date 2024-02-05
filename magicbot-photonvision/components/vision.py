@@ -1,6 +1,6 @@
 import math
 
-from photonlibpy import PhotonCamera
+from photonlibpy.photonCamera import PhotonCamera
 from wpimath.filter import MedianFilter
 
 
@@ -60,7 +60,9 @@ class Vision:
         result = self.camera.getLatestResult()
         if result.hasTargets():
             self.drought = 0
-            target = result.getBestTarget()
+            """replace this garbage with `result.getBestTarget()` whenever
+            photonvision decides to implement it in their lovely library"""
+            target = min(result.getTargets(), key=lambda t: t.getPoseAmbiguity())
             transform = target.getBestCameraToTarget()
             self._id = target.getFiducialId()
             self._x = self._x_filter.calculate(transform.X())
