@@ -5,10 +5,7 @@ from magicbot import tunable
 import navx
 
 from components.drivetrain import Drivetrain
-
-
-def clamp(value: float, min_value: float, max_value: float):
-    return max(min(value, max_value), min_value)
+import util
 
 
 class DriveControl(magicbot.StateMachine):
@@ -23,7 +20,7 @@ class DriveControl(magicbot.StateMachine):
     reboots. Also, this allows two different robots to have the same code
     and different configuration values.
     """
-    turn_to_angle_kP = tunable(0)
+    turn_to_angle_kP = tunable(0.03)
     turn_to_angle_kI = tunable(0)
     turn_to_angle_kD = tunable(0)
 
@@ -62,4 +59,4 @@ class DriveControl(magicbot.StateMachine):
 
         measurement = self.navx.getAngle()
         output = self.turn_to_angle_controller.calculate(measurement)
-        self.drivetrain.arcade_drive(0, clamp(output, -0.3, 0.3))
+        self.drivetrain.arcade_drive(0, -util.clamp(output, -0.3, 0.3))

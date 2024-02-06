@@ -6,10 +6,7 @@ import navx
 
 from components.drivetrain import Drivetrain
 from components.vision import Vision
-
-
-def clamp(value: float, min_value: float, max_value: float) -> float:
-    return max(min(value, max_value), min_value)
+import util
 
 
 class DriveControl(magicbot.StateMachine):
@@ -18,9 +15,9 @@ class DriveControl(magicbot.StateMachine):
     vision: Vision
 
     # variables to be injected
-    navx: navx.AHRS
+    gyro: navx.AHRS
 
-    turn_to_angle_kP = tunable(0)
+    turn_to_angle_kP = tunable(0.03)
     turn_to_angle_kI = tunable(0)
     turn_to_angle_kD = tunable(0)
 
@@ -38,12 +35,10 @@ class DriveControl(magicbot.StateMachine):
         self.turn_to_angle_controller.setSetpoint(angle)
 
     # control functions called from the main loop (must be continually called)
-    def turn_to_angle(self):
+    def turn_to_angle(self, angle: float = None):
+        if angle is not None:
+            self.set_angle(angle)
         self.engage(initial_state="turning_to_angle")
-
-    def turn_to_angle(self, angle: float):
-        self.set_angle(angle)
-        self.turn_to_angle()
 
     def set_drive_from_tag(self, distance: float):
         self.drive_from_tag_setpoint = distance
@@ -60,7 +55,7 @@ class DriveControl(magicbot.StateMachine):
     def turn_to_tag(self):
         # turns to face AprilTag
         if self.vision.hasTargets():
-            self.turn_to_angle(navx.getAngle() + self.vision.getHeading())
+            self.turn_to_angle(self.gyro.getAngle() + self.vision.getHeading())
 
     def follow_tag(self):
         # faces tag and drives set distance away from it
@@ -100,16 +95,16 @@ class DriveControl(magicbot.StateMachine):
             self.turn_to_angle_kP, self.turn_to_angle_kI, self.turn_to_angle_kD
         )
 
-        measurement = self.navx.getAngle()
+        measurement = self.gyro.getAngle()
         output = self.turn_to_angle_controller.calculate(measurement)
-        self.drivetrain.arcade_drive(0, clamp(output, -0.3, 0.3))
+        self.drivetrain.arcade_drive(0, -util.clamp(output, -0.3, 0.3))
 
     @state
     def driving_from_tag(self):
         measurement = self.vision.getX()
         error = self.drive_from_tag_setpoint - measurement
         output = error * self.drive_from_tag_kP
-        self.drivetrain.arcade_drive(clamp(output, -0.3, 0.3), 0)
+        self.drivetrain.arcade_drive(util.clamp(output, -0.3, 0.3), 0)
 
     @state
     def following_tag(self):
@@ -117,7 +112,7 @@ class DriveControl(magicbot.StateMachine):
             self.turn_to_angle_kP, self.turn_to_angle_kI, self.turn_to_angle_kD
         )
 
-        angle_measurement = self.navx.getAngle()
+        angle_measurement = self.gyro.getAngle()
         turn_output = self.turn_to_angle_controller.calculate(angle_measurement)
 
         distance_measurement = self.vision.getX()
@@ -125,5 +120,5 @@ class DriveControl(magicbot.StateMachine):
         forward_output = distance_error * self.drive_from_tag_kP
 
         self.drivetrain.arcade_drive(
-            clamp(forward_output, -0.3, 0.3), clamp(turn_output, -0.3, 0.3)
+            util.clamp(forward_output, -0.3, 0.3), -util.clamp(turn_output, -0.3, 0.3)
         )

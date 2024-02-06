@@ -53,7 +53,7 @@ class Vision:
     # returns angle that robot must turn to face tag
     def getHeading(self) -> float:
         if self.drought < self.filter_window:
-            return math.atan2(-self._y, self._x)
+            return math.atan2(-self._y, self._x) * 180 / math.pi
         return None
 
     def execute(self):
@@ -62,11 +62,11 @@ class Vision:
             self.drought = 0
             """replace this garbage with `result.getBestTarget()` whenever
             photonvision decides to implement it in their lovely library"""
-            target = min(result.getTargets(), key=lambda t: t.getPoseAmbiguity())
+            target = min(result.getTargets(), key=lambda t : t.getPoseAmbiguity())
             transform = target.getBestCameraToTarget()
             self._id = target.getFiducialId()
             self._x = self._x_filter.calculate(transform.X())
-            self._y = self._x_filter.calculate(transform.Y())
-            self._z = self._x_filter.calculate(transform.Z())
+            self._y = self._y_filter.calculate(transform.Y())
+            self._z = self._z_filter.calculate(transform.Z())
         else:
             self.drought += 1
