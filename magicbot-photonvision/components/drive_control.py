@@ -1,3 +1,6 @@
+import math
+import numpy as np
+
 import wpimath.controller
 import magicbot
 from magicbot.state_machine import state
@@ -7,6 +10,22 @@ import navx
 from components.drivetrain import Drivetrain
 from components.vision import Vision
 import util
+
+
+def adjust_heading(rc: np.array, ct: np.array):
+    """rc -- robot to camera vector
+    ct -- camera to tag vector
+    """
+    rt = rc + ct
+    theta = math.acos(np.dot(rc, rt) / (np.linalg.norm(rc) * np.linalg.norm(rt)))
+    theta *= 180 / math.pi
+    d = np.cross(rt, rc)[2]
+    if d > 0:
+        return theta
+    elif d < 0:
+        return -theta
+    else:
+        return 0
 
 
 class DriveControl(magicbot.StateMachine):
@@ -41,7 +60,7 @@ class DriveControl(magicbot.StateMachine):
         If no value is passed to `angle`, it will turn to whatever
         angle has been last set.
         """
-        if angle is not None:
+        if angle is not None:# and not self.is_executing:
             self.set_angle(angle)
         self.engage(initial_state="turning_to_angle")
 
@@ -63,8 +82,17 @@ class DriveControl(magicbot.StateMachine):
         """Changes the `turn_to_angle` setpoint to one such that the robot
         would face an AprilTag
         """
+        if not self.vision.hasTargets():
+            return
+        rc = np.array([0.33, -0.03, 0])
+        ct = np.array([self.vision.getX(), self.vision.getY(), self.vision.getZ()])
+        latency = self.vision.getLatency()
+        turn_rate = self.gyro.getRate()
+        theta = adjust_heading(rc, ct) - latency * turn_rate
+        if abs(theta) < 5:
+            theta = 0
         if self.vision.hasTargets():
-            self.turn_to_angle(self.gyro.getAngle() + self.vision.getHeading())
+            self.turn_to_angle(self.gyro.getAngle() + theta)
 
     def follow_tag(self, distance: float = None):
         """Call this function to engage the `following_tag` state.

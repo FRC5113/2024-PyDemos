@@ -13,6 +13,7 @@ class Vision:
     _y = 0
     _z = 0
     _id = 0
+    _latency = 0
 
     def setup(self):
         # setup() required because variables need to be injected
@@ -49,6 +50,11 @@ class Vision:
         if self.drought < self.filter_window:
             return self._id
         return None
+    
+    def getLatency(self) -> float:
+        if self.drought < self.filter_window:
+            return self._latency
+        return None
 
     # returns angle that robot must turn to face tag
     def getHeading(self) -> float:
@@ -65,6 +71,7 @@ class Vision:
             target = min(result.getTargets(), key=lambda t: t.getPoseAmbiguity())
             transform = target.getBestCameraToTarget()
             self._id = target.getFiducialId()
+            self._latency = result.getLatencyMillis() / 1000
             self._x = self._x_filter.calculate(transform.X())
             self._y = self._y_filter.calculate(transform.Y())
             self._z = self._z_filter.calculate(transform.Z())
