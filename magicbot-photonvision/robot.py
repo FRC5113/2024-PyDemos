@@ -16,7 +16,6 @@ from components.drivetrain import Drivetrain
 from components.vision import Vision
 import config
 import util
-from util import WPI_TalonFX
 
 
 drivetrain_cfg = config.pancake_cfg
@@ -49,16 +48,16 @@ class MyRobot(MagicRobot):
                 drivetrain_cfg.back_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
         elif drivetrain_cfg.controller_type == config.ControllerType.TALON_FX:
-            self.drivetrain_front_left_motor = WPI_TalonFX(
+            self.drivetrain_front_left_motor = util.WPI_TalonFX(
                 drivetrain_cfg.front_left_id
             )
-            self.drivetrain_front_right_motor = WPI_TalonFX(
+            self.drivetrain_front_right_motor = util.WPI_TalonFX(
                 drivetrain_cfg.front_right_id
             )
-            self.drivetrain_back_left_motor = WPI_TalonFX(
+            self.drivetrain_back_left_motor = util.WPI_TalonFX(
                 drivetrain_cfg.back_left_id
             )
-            self.drivetrain_back_right_motor = WPI_TalonFX(
+            self.drivetrain_back_right_motor = util.WPI_TalonFX(
                 drivetrain_cfg.back_right_id
             )
         else:
@@ -93,31 +92,31 @@ class MyRobot(MagicRobot):
     @feedback
     def get_id(self) -> int:
         id = self.vision.getId()
-        if (id is not None):
+        if id is not None:
             return id
         return -1
-    
+
     @feedback
     def get_x(self) -> int:
-        if (self.vision.hasTargets()):
+        if self.vision.hasTargets():
             return self.vision.getX()
         return 0
-    
+
     @feedback
     def get_y(self) -> int:
-        if (self.vision.hasTargets()):
+        if self.vision.hasTargets():
             return self.vision.getY()
         return 0
-    
+
     @feedback
     def get_z(self) -> int:
-        if (self.vision.hasTargets()):
+        if self.vision.hasTargets():
             return self.vision.getZ()
         return 0
 
     @feedback
     def get_heading(self) -> int:
-        if (self.vision.hasTargets()):
+        if self.vision.hasTargets():
             return self.vision.getHeading()
         return 0
 

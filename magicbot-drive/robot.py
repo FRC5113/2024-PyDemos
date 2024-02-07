@@ -10,7 +10,6 @@ from magicbot import MagicRobot
 from components.drivetrain import Drivetrain
 import config
 import util
-from util import WPI_TalonFX
 
 # change drivetrain here
 drivetrain_cfg = config.pancake_cfg
@@ -40,16 +39,16 @@ class MyRobot(MagicRobot):
                 drivetrain_cfg.back_right_id, CANSparkLowLevel.MotorType.kBrushless
             )
         elif drivetrain_cfg.controller_type == config.ControllerType.TALON_FX:
-            self.drivetrain_front_left_motor = WPI_TalonFX(
+            self.drivetrain_front_left_motor = util.WPI_TalonFX(
                 drivetrain_cfg.front_left_id
             )
-            self.drivetrain_front_right_motor = WPI_TalonFX(
+            self.drivetrain_front_right_motor = util.WPI_TalonFX(
                 drivetrain_cfg.front_right_id
             )
-            self.drivetrain_back_left_motor = WPI_TalonFX(
+            self.drivetrain_back_left_motor = util.WPI_TalonFX(
                 drivetrain_cfg.back_left_id
             )
-            self.drivetrain_back_right_motor = WPI_TalonFX(
+            self.drivetrain_back_right_motor = util.WPI_TalonFX(
                 drivetrain_cfg.back_right_id
             )
         else:

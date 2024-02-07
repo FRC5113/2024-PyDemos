@@ -62,7 +62,7 @@ class Vision:
             self.drought = 0
             """replace this garbage with `result.getBestTarget()` whenever
             photonvision decides to implement it in their lovely library"""
-            target = min(result.getTargets(), key=lambda t : t.getPoseAmbiguity())
+            target = min(result.getTargets(), key=lambda t: t.getPoseAmbiguity())
             transform = target.getBestCameraToTarget()
             self._id = target.getFiducialId()
             self._x = self._x_filter.calculate(transform.X())
