@@ -36,9 +36,11 @@ class DriveControl(magicbot.StateMachine):
     # variables to be injected
     gyro: navx.AHRS
 
-    turn_to_angle_kP = tunable(0.03)
+    turn_to_angle_kP = tunable(0.025)
     turn_to_angle_kI = tunable(0)
-    turn_to_angle_kD = tunable(0)
+    turn_to_angle_kD = tunable(0.003)
+    turn_to_angle_tP = tunable(5)
+    turn_to_angle_tV = tunable(0.1)
 
     drive_from_tag_kP = tunable(0)
     drive_from_tag_setpoint = 0
@@ -47,6 +49,9 @@ class DriveControl(magicbot.StateMachine):
         # setup() required because tunables need to be fetched
         self.turn_to_angle_controller = wpimath.controller.PIDController(
             self.turn_to_angle_kP, self.turn_to_angle_kI, self.turn_to_angle_kD
+        )
+        self.turn_to_angle_controller.setTolerance(
+            self.turn_to_angle_tP, self.turn_to_angle_tV
         )
         self.turn_to_angle_controller.enableContinuousInput(0, 360)
 
@@ -89,7 +94,7 @@ class DriveControl(magicbot.StateMachine):
         latency = self.vision.getLatency()
         turn_rate = self.gyro.getRate()
         theta = adjust_heading(rc, ct) - latency * turn_rate
-        if abs(theta) < 5:
+        if self.turn_to_angle_controller.atSetpoint():
             theta = 0
         if self.vision.hasTargets():
             self.turn_to_angle(self.gyro.getAngle() + theta)
@@ -144,6 +149,9 @@ class DriveControl(magicbot.StateMachine):
         self.turn_to_angle_controller.setPID(
             self.turn_to_angle_kP, self.turn_to_angle_kI, self.turn_to_angle_kD
         )
+        self.turn_to_angle_controller.setTolerance(
+            self.turn_to_angle_tP, self.turn_to_angle_tV
+        )
 
         measurement = self.gyro.getAngle()
         output = self.turn_to_angle_controller.calculate(measurement)
@@ -176,6 +184,9 @@ class DriveControl(magicbot.StateMachine):
         """
         self.turn_to_angle_controller.setPID(
             self.turn_to_angle_kP, self.turn_to_angle_kI, self.turn_to_angle_kD
+        )
+        self.turn_to_angle_controller.setTolerance(
+            self.turn_to_angle_tP, self.turn_to_angle_tV
         )
 
         angle_measurement = self.gyro.getAngle()
