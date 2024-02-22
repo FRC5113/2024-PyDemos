@@ -6,7 +6,7 @@ identify, turn to, or follow Apriltags.
 
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
-from phoenix5 import WPI_TalonSRX
+import phoenix5
 from magicbot import MagicRobot, feedback
 import navx
 from photonlibpy.photonCamera import PhotonCamera
@@ -61,16 +61,16 @@ class MyRobot(MagicRobot):
                 drivetrain_cfg.back_right_id
             )
         elif drivetrain_cfg.controller_type == config.ControllerType.TALON_SRX:
-            self.drivetrain_front_left_motor = WPI_TalonSRX(
+            self.drivetrain_front_left_motor = phoenix5.WPI_TalonSRX(
                 drivetrain_cfg.front_left_id
             )
-            self.drivetrain_front_right_motor = WPI_TalonSRX(
+            self.drivetrain_front_right_motor = phoenix5.WPI_TalonSRX(
                 drivetrain_cfg.front_right_id
             )
-            self.drivetrain_back_left_motor = WPI_TalonSRX(
+            self.drivetrain_back_left_motor = phoenix5.WPI_TalonSRX(
                 drivetrain_cfg.back_left_id
             )
-            self.drivetrain_back_right_motor = WPI_TalonSRX(
+            self.drivetrain_back_right_motor = phoenix5.WPI_TalonSRX(
                 drivetrain_cfg.back_right_id
             )
         else:

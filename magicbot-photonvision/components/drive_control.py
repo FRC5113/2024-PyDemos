@@ -65,7 +65,7 @@ class DriveControl(magicbot.StateMachine):
         If no value is passed to `angle`, it will turn to whatever
         angle has been last set.
         """
-        if angle is not None:# and not self.is_executing:
+        if angle is not None:  # and not self.is_executing:
             self.set_angle(angle)
         self.engage(initial_state="turning_to_angle")
 
