@@ -38,16 +38,6 @@ class Drivetrain:
         self.drive = DifferentialDrive(
             self.left_motor_controller_group, self.right_motor_controller_group
         )
-        idle_mode = None
-        if self.controller_type == ControllerType.SPARK_MAX:
-            idle_mode = CANSparkBase.IdleMode.kCoast
-        elif self.controller_type == ControllerType.TALON_FX:
-            idle_mode = NeutralModeValue.COAST
-        # duck typing go brrrr
-        self.front_left_motor.setIdleMode(idle_mode)
-        self.front_right_motor.setIdleMode(idle_mode)
-        self.back_left_motor.setIdleMode(idle_mode)
-        self.back_right_motor.setIdleMode(idle_mode)
         self.drive.setExpiration(0.1)
 
     def on_enable(self):

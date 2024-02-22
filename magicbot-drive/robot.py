@@ -5,6 +5,7 @@ program using the magicbot framework.
 
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
+from phoenix5 import WPI_TalonSRX
 from magicbot import MagicRobot
 
 from components.drivetrain import Drivetrain
@@ -12,7 +13,7 @@ import config
 import util
 
 # change drivetrain here
-drivetrain_cfg = config.pancake_cfg
+drivetrain_cfg = config.pandemonium_cfg
 
 
 class MyRobot(MagicRobot):
@@ -49,6 +50,19 @@ class MyRobot(MagicRobot):
                 drivetrain_cfg.back_left_id
             )
             self.drivetrain_back_right_motor = util.WPI_TalonFX(
+                drivetrain_cfg.back_right_id
+            )
+        elif drivetrain_cfg.controller_type == config.ControllerType.TALON_SRX:
+            self.drivetrain_front_left_motor = WPI_TalonSRX(
+                drivetrain_cfg.front_left_id
+            )
+            self.drivetrain_front_right_motor = WPI_TalonSRX(
+                drivetrain_cfg.front_right_id
+            )
+            self.drivetrain_back_left_motor = WPI_TalonSRX(
+                drivetrain_cfg.back_left_id
+            )
+            self.drivetrain_back_right_motor = WPI_TalonSRX(
                 drivetrain_cfg.back_right_id
             )
         else:

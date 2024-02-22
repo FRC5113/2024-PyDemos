@@ -42,8 +42,8 @@ class DriveControl(magicbot.StateMachine):
     turn_to_angle_tP = tunable(5)
     turn_to_angle_tV = tunable(0.1)
 
-    drive_from_tag_kP = tunable(0)
-    drive_from_tag_setpoint = 0
+    drive_from_tag_kP = tunable(2)
+    drive_from_tag_setpoint = tunable(0.3)
 
     def setup(self):
         # setup() required because tunables need to be fetched
@@ -89,7 +89,7 @@ class DriveControl(magicbot.StateMachine):
         """
         if not self.vision.hasTargets():
             return
-        rc = np.array([0.33, -0.03, 0])
+        rc = np.array([0.35, 0])
         ct = np.array([self.vision.getX(), self.vision.getY(), self.vision.getZ()])
         latency = self.vision.getLatency()
         turn_rate = self.gyro.getRate()
@@ -170,11 +170,7 @@ class DriveControl(magicbot.StateMachine):
         measurement = self.vision.getX()
         error = self.drive_from_tag_setpoint - measurement
         output = error * self.drive_from_tag_kP
-        """Here the output is negated because a positive error means that
-        the setpoint is greater than the measurement, which means the robot
-        is too close. If so, it must drive backward (ie with negative velocity)
-        """
-        self.drivetrain.arcade_drive(util.clamp(-output, -0.3, 0.3), 0)
+        self.drivetrain.arcade_drive(util.clamp(output, -0.3, 0.3), 0)
 
     @state
     def following_tag(self):
@@ -189,6 +185,14 @@ class DriveControl(magicbot.StateMachine):
             self.turn_to_angle_tP, self.turn_to_angle_tV
         )
 
+        rc = np.array([0.33, -0.03, 0])
+        ct = np.array([self.vision.getX(), self.vision.getY(), self.vision.getZ()])
+        latency = self.vision.getLatency()
+        turn_rate = self.gyro.getRate()
+        theta = adjust_heading(rc, ct) - latency * turn_rate
+        if self.turn_to_angle_controller.atSetpoint():
+            theta = 0
+        self.set_angle(self.gyro.getAngle() + theta)
         angle_measurement = self.gyro.getAngle()
         turn_output = self.turn_to_angle_controller.calculate(angle_measurement)
 
@@ -197,5 +201,5 @@ class DriveControl(magicbot.StateMachine):
         forward_output = distance_error * self.drive_from_tag_kP
 
         self.drivetrain.arcade_drive(
-            util.clamp(-forward_output, -0.3, 0.3), util.clamp(-turn_output, -0.3, 0.3)
+            util.clamp(forward_output, -0.3, 0.3), util.clamp(-turn_output, -0.3, 0.3)
         )

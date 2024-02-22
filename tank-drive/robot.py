@@ -33,10 +33,10 @@ perry_ids = {
     "controller_type": "talon",
 }
 pandemonium_ids = {
-    "front_left": 11,
-    "back_left": 21,
-    "front_right": 12,
-    "back_right": 22,
+    "front_left": 15,
+    "back_left": 55,
+    "front_right": 18,
+    "back_right": 12,
     "controller_type": "spark_max",
 }
 # set this to change current robot

@@ -6,7 +6,7 @@ identify, turn to, or follow Apriltags.
 
 import wpilib
 from rev import CANSparkMax, CANSparkLowLevel
-from phoenix5 import WPI_TalonFX
+from phoenix5 import WPI_TalonSRX
 from magicbot import MagicRobot, feedback
 import navx
 from photonlibpy.photonCamera import PhotonCamera
@@ -60,6 +60,19 @@ class MyRobot(MagicRobot):
             self.drivetrain_back_right_motor = util.WPI_TalonFX(
                 drivetrain_cfg.back_right_id
             )
+        elif drivetrain_cfg.controller_type == config.ControllerType.TALON_SRX:
+            self.drivetrain_front_left_motor = WPI_TalonSRX(
+                drivetrain_cfg.front_left_id
+            )
+            self.drivetrain_front_right_motor = WPI_TalonSRX(
+                drivetrain_cfg.front_right_id
+            )
+            self.drivetrain_back_left_motor = WPI_TalonSRX(
+                drivetrain_cfg.back_left_id
+            )
+            self.drivetrain_back_right_motor = WPI_TalonSRX(
+                drivetrain_cfg.back_right_id
+            )
         else:
             raise Exception(
                 f"Improper controller type in `drivetrain_cfg`: {drivetrain_cfg.controller_type}"
@@ -79,7 +92,7 @@ class MyRobot(MagicRobot):
         with self.consumeExceptions():
             # state machine will only execute when button is held for safety reasons
             if self.joystick.getTrigger():
-                self.drive_control.turn_to_tag()
+                self.drive_control.follow_tag()
             else:
                 self.drivetrain.arcade_drive(
                     self.curve(self.joystick.getY()), -self.curve(self.joystick.getX())
